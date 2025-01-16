@@ -35,30 +35,44 @@ export class UtilService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  public async delayRandom(ms: number) {
+    const rand = Math.random() * ms + ms;
+    return new Promise(resolve => setTimeout(resolve, rand));
+  }
+
   public getDataFromJsonString<T>(jsonString: string, field: string, defaultValue: T): T | null {
     const start = jsonString.indexOf(field);
     const comma = jsonString.indexOf(':', start);
     if (comma === -1 || start === -1) return null;
 
     let result = '', isQuotaOpen = false, quotaChar = '"';
-    const endChar = ",";
+    const endChar = ",", stack = [];
+    const structs = {
+      "{": "}",
+      "[": "]"
+    };
 
     for (let i = comma + 1; i < jsonString.length; i++) {
-      const char = jsonString[i];
+      let char = jsonString[i];
+      if (structs[char] && !isQuotaOpen) stack.push(structs[char]);
 
+      while (stack.length) {
+        result += char;
+        if (char === stack[stack.length - 1]) stack.pop();
+        i++;
+        char = jsonString[i];
+      }
+      
       if (char === quotaChar && jsonString[i - 1] !== '\\') {
         isQuotaOpen = !isQuotaOpen;
         continue;
       }
 
-      if (isQuotaOpen) {
-        result += char;
-        continue;
-      }
+      if (char === endChar && !isQuotaOpen) break;
 
-      if (char === endChar) break;
+      result += char;
     }
-
+    
     if (result === '') return null;
 
     if (typeof defaultValue == "number") {
@@ -71,6 +85,6 @@ export class UtilService {
   }
 
   private parseArrayFromString(string: string): string[] {
-    return string.replace(/\[|\]/g, '').split(',').map(s => s.trim());
+    return string.replace(/\[|\]|\"/g, '').split(',').map(s => s.trim());
   }
 }

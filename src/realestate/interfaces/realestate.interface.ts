@@ -1,6 +1,8 @@
 
 export enum SourceType {
-    Halooglasi = 'Halooglasi'
+    Halooglasi = 'Halooglasi',
+    Nekretnine = 'Nekretnine',
+    Zida = '4Zida'
 } 
 
 export enum PropertyType {

@@ -4,7 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { UtilService } from 'src/common/providers/utils.service';
 
 import { ScrapStatusService } from 'src/scraplog/scraplog.service';
-import { ScraperType, ScrapLogType } from 'src/scraplog/interfaces/scraperlog.interface';
+import { ScraperStatus, ScraperType, ScrapLogType } from 'src/scraplog/interfaces/scraperlog.interface';
 
 import { ListeningType, PropertyType, SourceType } from 'src/realestate/interfaces/realestate.interface';
 import { Defaults, HalooglasiSelectors, HalooglasiUrls } from './interfaces/halooglasi.interface';
@@ -15,6 +15,8 @@ import { RealestateService } from 'src/realestate/realestate.service';
 export class HalooglasiService {
     private logId: string;
     private isErrorHappened: boolean = false;
+    private inProgress = false;
+    private recordsParsed = 0;
 
     constructor(
         private readonly scrapService: ScrapStatusService,
@@ -22,20 +24,37 @@ export class HalooglasiService {
         private readonly utilService: UtilService,
     ) {}
     
-    @Cron(CronExpression.EVERY_12_HOURS, {
+    // @TODO change on 12 hours
+    @Cron(CronExpression.EVERY_5_SECONDS, {
         name: ScraperType.Halooglasi,
         timeZone: 'Europe/Belgrade',
         disabled: true
     })
     async handleCron() {
-        await this.startScrap();
+        try {
+            if (this.inProgress) return;
+
+            this.inProgress = true;
+            await this.startScrap();
+        } finally {
+            // @TODO uncomment after testing
+            // this.inProgress = false;
+        }
     }
  
     async startScrap() {
+        let status = ScraperStatus.Finished;
+        
         const s = await this.scrapService.startScrap(ScraperType.Halooglasi);
         this.logId = s._id.toString();
         await this.scrapAll();
-        await this.scrapService.finishScrap(this.logId, this.isErrorHappened);
+
+        if (this.recordsParsed === 0) {
+            status = ScraperStatus.NoRecordsAdded;
+        } else if (this.isErrorHappened) {
+            status = ScraperStatus.FinishedWithErrors;
+        }
+        await this.scrapService.finishScrap(this.logId, status);
     }
 
     private async scrapAll() {
@@ -65,9 +84,11 @@ export class HalooglasiService {
                 });
                 
                 await this.realEstateService.createMany(specifiedEstates);
+                this.recordsParsed += specifiedEstates.length;
+                break; // @TODO remove after testing
             } catch (e) {
                 this.isErrorHappened = true;
-                this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap page ${page} for ${propType} ${listeningType}, Error: ${e}`);
+                this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap page ${url} for ${propType} ${listeningType}, Error: ${e}`);
             }
         }
     }
@@ -78,14 +99,16 @@ export class HalooglasiService {
         const products = page.querySelectorAll(HalooglasiSelectors.ProductSelector);
 
         for (const product of products) {
+            const href = product.getAttribute('href');
+            const url = this.utilService.getConcatedUrl(pageUrl, href);
+                
             try {
-                const href = product.getAttribute('href');
-                const url = this.utilService.getConcatedUrl(pageUrl, href);
                 const estate = await this.scrapProductDetails(url);
+                await this.utilService.delayRandom(1000);
                 resArr.push(estate);
             } catch (e) {
                 this.isErrorHappened = true;
-                this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap product ${pageUrl}, Error: ${e}`);
+                this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap product ${url}, Error: ${e}`);
             }
         }
 
@@ -115,6 +138,9 @@ export class HalooglasiService {
         property.TotalFloors = this.utilService.getDataFromJsonString<number>(productJson, HalooglasiSelectors.PropertyTotalFloorsSelector, Defaults.NumberDefault);
         property.Price = this.utilService.getDataFromJsonString<number>(productJson, HalooglasiSelectors.PropertyPriceSelector, Defaults.NumberDefault);
         property.AdditionalInfo = this.utilService.getDataFromJsonString<string[]>(productJson, HalooglasiSelectors.PropertyAdditionalInfoSelector, []);
+        property.ImgLinks = this.utilService
+            .getDataFromJsonString<string[]>(productJson, HalooglasiSelectors.PropertyImageLinksSelector, [])
+            .map(l => this.utilService.getConcatedUrl(HalooglasiUrls.ImageLinkUrl, l));
 
         return property;
     }

@@ -1,12 +1,14 @@
-
 export enum ScraperStatus {
     Finished = 'Finished',
     FinishedWithErrors = 'FinishedWithErrors',
+    NoRecordsAdded = 'NoRecordsAdded',
     InProgress = 'InProgress'
 }
 
 export enum ScraperType {
-    Halooglasi = 'Halooglasi'
+    Halooglasi = 'Halooglasi',
+    Nekretnine = 'Nekretnine',
+    Zida = '4Zida'
 }
 
 export enum ScrapLogType {

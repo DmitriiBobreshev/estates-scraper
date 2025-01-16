@@ -7,16 +7,17 @@ export class CreateRealEstateDto {
   SourceType: SourceType;
   ListeningType: ListeningType;
   LastScrapedAt: number;
+  Location: string;
+  Microlocation: string;
+  PropertyType: PropertyType;
+  Price: number;
 
   LocationCoords?: string;
-  Location?: string;
-  Microlocation?: string;
   Street?: string;
   Area?: number;
   Rooms?: number;
   Floor?: string;
   TotalFloors?: number;
-  PropertyType?: PropertyType;
-  Price?: number;
   AdditionalInfo?: string[];
+  ImgLinks?: string[];
 }

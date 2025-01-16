@@ -26,9 +26,9 @@ export class ScrapStatusService {
     return this.scraperLogModel.create(record);
   }
 
-  finishScrap(id: string, isErrorHappened: boolean = false) {
+  finishScrap(id: string, status: ScraperStatus) {
     const record = new UpdateStatusRecordDto();
-    record.status = isErrorHappened ? ScraperStatus.FinishedWithErrors : ScraperStatus.Finished;
+    record.status = status;
     record.updatedAt = Date.now();
     return this.scraperLogModel.findByIdAndUpdate(id, record, { new: true });
   }
@@ -46,7 +46,15 @@ export class ScrapStatusService {
     }
   }
 
-  async getLatestScrap() {
-    return await this.scraperLogModel.find().sort({ createdAt: -1 }).limit(1);
+  // @TODO TEST METHOD
+  async getAllStatuses() {
+    const res = await this.scraperLogModel.find().sort({ createdAt: -1 });
+    return res;
+  }
+
+  // @TODO TEST METHOD
+  async getAllRecords() {
+    const res = await this.scraperLogRecordsModel.find().sort({ createdAt: -1 });
+    return res;
   }
 }

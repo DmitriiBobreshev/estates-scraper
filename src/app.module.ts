@@ -2,19 +2,23 @@ import 'dotenv/config';
 
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { AppController } from './app.controller';
 
 import { HalooglasiModule } from './scrapers/halooglasi/halooglasi.module';
-import { ScheduleModule } from '@nestjs/schedule';
 import { ScrapStatusModule } from './scraplog/scraplog.module';
+import { ZidaModule } from './scrapers/zida/zida.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGO_URI),
     ScrapStatusModule.register(),
-    HalooglasiModule
+
+    // scap modules
+    HalooglasiModule,
+    ZidaModule,
   ],
   controllers: [AppController]
 })

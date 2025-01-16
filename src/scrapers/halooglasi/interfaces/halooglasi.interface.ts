@@ -13,6 +13,7 @@ export enum HalooglasiSelectors {
     PropertyTotalFloorsSelector = '"sprat_od_s"',
     PropertyPriceSelector = '"cena_d"',
     PropertyAdditionalInfoSelector = '"dodatno_ss"',
+    PropertyImageLinksSelector = '"ImageURLs"',
 }
 
 export enum HalooglasiUrls {
@@ -20,6 +21,7 @@ export enum HalooglasiUrls {
     ApartmentRent = 'https://www.halooglasi.com/nekretnine/izdavanje-stanova',
     HouseSale = 'https://www.halooglasi.com/nekretnine/prodaja-kuca',
     HouseRent = 'https://www.halooglasi.com/nekretnine/izdavanje-kuca',
+    ImageLinkUrl = 'https://img.halooglasi.com'
 }
 
 export enum Defaults {

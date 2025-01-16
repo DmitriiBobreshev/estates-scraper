@@ -30,13 +30,18 @@ export class RealestateService {
 
     async createMany(properties: CreateRealEstateDto[]) {
         for (const property of properties) {
-            const foundProperty = await this.findProperty(property);
+            try {
+                const foundProperty = await this.findProperty(property);
 
-            if (foundProperty) {
-                await this.scraperLogModel.findByIdAndUpdate(foundProperty.id, property, { new: true });
-            } else {
-                await this.createProperty(property);
+                if (foundProperty) {
+                    await this.scraperLogModel.findByIdAndUpdate(foundProperty.id, property, { new: true });
+                } else {
+                    await this.createProperty(property);
+                }
+            } catch (error) {
+                throw new Error(`Error while creating property: ${JSON.stringify(property)}, error: ${error}`);
             }
+            
         }
         return null;
     }
