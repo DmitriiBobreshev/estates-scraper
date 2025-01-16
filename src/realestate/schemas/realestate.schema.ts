@@ -27,10 +27,10 @@ export class RealEstates {
   @Prop()
   LocationCoords: string;
 
-  @Prop()
+  @Prop({required: true})
   Location: string;
 
-  @Prop()
+  @Prop({required: true})
   Microlocation: string;
 
   @Prop()
@@ -48,10 +48,10 @@ export class RealEstates {
   @Prop()
   TotalFloors: number;
 
-  @Prop()
+  @Prop({required: true})
   PropertyType: PropertyType;
 
-  @Prop()
+  @Prop({required: true})
   Price: number;
 
   @Prop()
