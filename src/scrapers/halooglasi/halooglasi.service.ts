@@ -22,7 +22,7 @@ export class HalooglasiService {
         private readonly utilService: UtilService,
     ) {}
     
-    @Cron(CronExpression.EVERY_5_SECONDS, {
+    @Cron(CronExpression.EVERY_12_HOURS, {
         name: ScraperType.Halooglasi,
         timeZone: 'Europe/Belgrade',
         disabled: true
