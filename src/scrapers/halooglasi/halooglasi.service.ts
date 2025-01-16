@@ -22,9 +22,13 @@ export class HalooglasiService {
         private readonly utilService: UtilService,
     ) {}
     
-    @Cron(CronExpression.EVERY_5_SECONDS)
+    @Cron(CronExpression.EVERY_5_SECONDS, {
+        name: ScraperType.Halooglasi,
+        timeZone: 'Europe/Belgrade',
+        disabled: true
+    })
     async handleCron() {
-       
+        await this.startScrap();
     }
  
     async startScrap() {
