@@ -22,7 +22,7 @@ export class RealEstates {
   ListeningType: ListeningType;
 
   @Prop({required: true})
-  LastScrappedAt: number;
+  LastScrapedAt: number;
 
   @Prop()
   LocationCoords: string;

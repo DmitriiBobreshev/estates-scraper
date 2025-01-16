@@ -6,7 +6,7 @@ export class CreateRealEstateDto {
   Link: string;
   SourceType: SourceType;
   ListeningType: ListeningType;
-  LastScrappedAt: number;
+  LastScrapedAt: number;
 
   LocationCoords?: string;
   Location?: string;
