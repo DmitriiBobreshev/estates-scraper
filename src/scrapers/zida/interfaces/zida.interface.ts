@@ -1,11 +1,9 @@
 export enum ZidaSelectors {
     BookmarkSelector = 'svg use[href="/icons/sprite.svg#material/bookmark_outline"]',
-    TitleSelector = 'meta[property="og:title"]',
     ImageSelector = 'div[aria-roledescription="carousel"] img.w-full',
     DivSelector = 'div',
     SpanSelector = 'span',
     LinkSelector = 'a',
-    ContentAttribute = 'content',
     H1Selector = 'h1',
     HrefAttribute = 'href',
 }

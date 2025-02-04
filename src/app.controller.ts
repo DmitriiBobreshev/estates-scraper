@@ -2,14 +2,13 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 
 import { ScrapStatusService } from './scraplog/scraplog.service';
-import { ScraperType } from './scraplog/interfaces/scraperlog.interface';
-import { create } from 'domain';
+
 
 @Controller()
 export class AppController {
   constructor(
     private readonly scrapService: ScrapStatusService,
-    private schedulerRegistry: SchedulerRegistry
+    private schedulerRegistry: SchedulerRegistry,
   ) {}
 
   @Get()

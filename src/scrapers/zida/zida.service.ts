@@ -107,6 +107,8 @@ export class ZidaService {
             try {
                 const estate = await this.scrapProductDetails(url);
                 await this.utilService.delayRandom(1000);
+                if (!estate.Price) continue;
+                
                 resArr.push(estate);
             } catch (e) {
                 this.isErrorHappened = true;
@@ -127,10 +129,9 @@ export class ZidaService {
         const page = this.utilService.getHtmlFromContent(content);
         try {
             // '1-etažna kuća za izdavanje, Stanovo, 1.500€, 240m²'
-            const titleEl = page.querySelector(ZidaSelectors.TitleSelector).getAttribute(ZidaSelectors.ContentAttribute);
-            const title = titleEl.split(',');
-            const locations = [...page.querySelectorAll(ZidaSelectors.H1Selector)]
-                .find(e => e.textContent.includes(titleEl))
+            const titleEl = page.querySelector(ZidaSelectors.H1Selector);
+            const title = titleEl.textContent.split(',');
+            const locations = titleEl
                 .closest(ZidaSelectors.DivSelector)
                 .querySelector(ZidaSelectors.SpanSelector)
                 .textContent 
