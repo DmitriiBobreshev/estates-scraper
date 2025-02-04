@@ -34,10 +34,11 @@ export class HalooglasiService {
         try {
             if (this.inProgress) return;
 
+            this.recordsParsed = 0;
             this.inProgress = true;
             await this.startScrap();
         } finally {
-            // @TODO uncomment after testing
+            // @TODO uncommit in prod
             // this.inProgress = false;
         }
     }
@@ -85,7 +86,6 @@ export class HalooglasiService {
                 
                 await this.realEstateService.createMany(specifiedEstates);
                 this.recordsParsed += specifiedEstates.length;
-                break; // @TODO remove after testing
             } catch (e) {
                 this.isErrorHappened = true;
                 this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap page ${url} for ${propType} ${listeningType}, Error: ${e}`);

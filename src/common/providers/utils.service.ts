@@ -21,6 +21,10 @@ export class UtilService {
     }
   }
 
+  public getHtmlFromContent(content: string): HTMLElement {
+    return parse(content);
+  }
+
   public async getHtmlFromUrl(url: string): Promise<HTMLElement> {
     const response = await this.makeRequestWithRetries(url);
     return parse(response);

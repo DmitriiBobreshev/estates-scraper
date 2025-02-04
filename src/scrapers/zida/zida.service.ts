@@ -10,7 +10,6 @@ import { ListeningType, PropertyType, SourceType } from 'src/realestate/interfac
 import { CreateRealEstateDto } from 'src/realestate/dto';
 import { RealestateService } from 'src/realestate/realestate.service';
 import { ZidaSelectors, ZidaUrls } from './interfaces/zida.interface';
-import { stat } from 'fs';
 
 @Injectable()
 export class ZidaService {
@@ -35,10 +34,12 @@ export class ZidaService {
         try {
             if (this.inProgress) return;
 
+            this.recordsParsed = 0;
             this.inProgress = true;
             await this.startScrap();
         } finally {
-            this.inProgress = false;
+            // @TODO uncommit in prod
+            // this.inProgress = false;
         }
     }
  
@@ -122,33 +123,38 @@ export class ZidaService {
      * @returns product details
      */
     private async scrapProductDetails(productUrl: string): Promise<CreateRealEstateDto> {
-        const page = await this.utilService.getHtmlFromUrl(productUrl);
-        // '1-etažna kuća za izdavanje, Stanovo, 1.500€, 240m²'
-        const titleEl = page.querySelector(ZidaSelectors.TitleSelector).getAttribute(ZidaSelectors.ContentAttribute);
-        const title = titleEl.split(',');
-        const locations = [...page.querySelectorAll(ZidaSelectors.H1Selector)]
-            .find(e => e.textContent.includes(titleEl))
-            .closest(ZidaSelectors.DivSelector)
-            .querySelector(ZidaSelectors.SpanSelector)
-            .textContent 
-            .split(',');
+        const content = await this.utilService.makeRequestWithRetries(productUrl);
+        const page = this.utilService.getHtmlFromContent(content);
+        try {
+            // '1-etažna kuća za izdavanje, Stanovo, 1.500€, 240m²'
+            const titleEl = page.querySelector(ZidaSelectors.TitleSelector).getAttribute(ZidaSelectors.ContentAttribute);
+            const title = titleEl.split(',');
+            const locations = [...page.querySelectorAll(ZidaSelectors.H1Selector)]
+                .find(e => e.textContent.includes(titleEl))
+                .closest(ZidaSelectors.DivSelector)
+                .querySelector(ZidaSelectors.SpanSelector)
+                .textContent 
+                .split(',');
 
-        const images = [...page.querySelectorAll(ZidaSelectors.ImageSelector)].map(e => e.getAttribute('src'));
+            const images = [...page.querySelectorAll(ZidaSelectors.ImageSelector)].map(e => e.getAttribute('src'));
 
-        const property = new CreateRealEstateDto();
-        property.ProperyId = productUrl.split('/').pop();
-        property.City = locations[0] ?? null;
-        property.Link = productUrl;
-        property.SourceType = SourceType.Zida;
-        
-        property.Location = locations[1] ?? null;
-        property.Microlocation = locations[2] ?? "unknown";
-        property.Street = locations[3] ?? null;
-        property.Area = parseFloat(title[title.length - 1].trim());
-        property.Price = parseFloat(title[title.length - 2].trim().replace(".", ''));
-        property.ImgLinks = images;
+            const property = new CreateRealEstateDto();
+            property.ProperyId = productUrl.split('/').pop();
+            property.City = locations[0] ?? null;
+            property.Link = productUrl;
+            property.SourceType = SourceType.Zida;
+            
+            property.Location = locations[1] ?? "unknown";
+            property.Microlocation = locations[2] ?? "unknown";
+            property.Street = locations[3] ?? null;
+            property.Area = parseFloat(title[title.length - 1].trim());
+            property.Price = parseFloat(title[title.length - 2].trim().replace(".", ''));
+            property.ImgLinks = images;
 
-        return property;
+            return property;
+        } catch (e) {
+            throw new Error(`Failed to scrap product ${productUrl}, Content: ${content} Error: ${e}`);
+        }
     }
 
 }
