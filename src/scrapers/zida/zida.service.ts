@@ -153,11 +153,11 @@ export class ZidaService {
             property.ImgLinks = images;
 
             const description = [...page.querySelectorAll(ZidaSelectors.DivSelector)].find(e => e.innerText.includes(ZidaSelectors.OpisText));
-            property.Description = description.parentNode.innerText.split('\n').filter(e => e).join('\n');
+            property.Description = description?.parentNode?.innerText.split('\n').filter(e => e).join('\n') ?? "unknown";
 
             return property;
         } catch (e) {
-            throw new Error(`Failed to scrap product ${productUrl}, Content: ${content} Error: ${e}`);
+            throw new Error(`Failed to scrap product ${productUrl}, Error: ${e}`);
         }
     }
 

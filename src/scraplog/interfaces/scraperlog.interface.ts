@@ -8,7 +8,8 @@ export enum ScraperStatus {
 export enum ScraperType {
     Halooglasi = 'Halooglasi',
     Nekretnine = 'Nekretnine',
-    Zida = '4Zida'
+    Zida = '4Zida',
+    CityExpert = 'CityExpert'
 }
 
 export enum ScrapLogType {

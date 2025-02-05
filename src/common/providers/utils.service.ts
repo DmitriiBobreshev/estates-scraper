@@ -25,8 +25,8 @@ export class UtilService {
     return parse(content);
   }
 
-  public async getHtmlFromUrl(url: string): Promise<HTMLElement> {
-    const response = await this.makeRequestWithRetries(url);
+  public async getHtmlFromUrl(url: string, retries: number = 3): Promise<HTMLElement> {
+    const response = await this.makeRequestWithRetries(url, retries);
     return parse(response);
   }
 
