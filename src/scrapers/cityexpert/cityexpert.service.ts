@@ -56,7 +56,7 @@ export class CityexpertService {
   }
 
   private async getPropertyDetail(id: string, type: rentOrSale) {
-    const url = `https://cityexpert.rs/api/PropertyView/${id}/${type}`;
+    const url = `${URIs.APIURI}${id}/${type}`;
     const res = await this.utilService.makeRequestWithRetries(url);
     if (!res) throw new Error('Failed to get property details for ' + url);
 
@@ -88,6 +88,7 @@ export class CityexpertService {
 
         await this.realEstateService.createMany(estates);
         this.recordsParsed += estates.length;
+
       } catch (e) {
         this.isErrorHappened = true;
         this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap page ${url}, Error: ${e}`);
@@ -131,13 +132,13 @@ export class CityexpertService {
       property.ListeningType = listeningType === rentOrSale.Rent ? ListeningType.Rent : ListeningType.Sale;
       property.LastScrapedAt = Date.now();
       property.Location = json.municipality;
-      property.Microlocation = json.neighbourhoods.join(', ');
+      property.Microlocation = json.neighbourhoods.join(', ') || "N/A";
       property.PropertyType = json.ptId === PropType.Apartment ? PropertyType.Apartment : json.ptId === PropType.House ? PropertyType.House : PropertyType.Apartment;
       property.Price = json.price;
       property.LocationCoords = json.mapLat + ',' + json.mapLng;
       property.Street = json.street;
       property.Area = json.size;
-      property.Rooms = parseFloat(json.structure);
+      property.Rooms = parseFloat(json.structure) || 10;
       property.Floor = json.floor;
       property.AdditionalInfo = null;
       property.Description = null;

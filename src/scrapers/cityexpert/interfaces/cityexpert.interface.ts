@@ -6,7 +6,8 @@ export enum CitiesURIs {
 
 export enum URIs {
   Sale = "https://cityexpert.rs/prodaja-nekretnina/",
-  Rent = "https://cityexpert.rs/izdavanje-nekretnina/"
+  Rent = "https://cityexpert.rs/izdavanje-nekretnina/",
+  APIURI = "https://cityexpert.rs/api/PropertyView/"
 }
 
 export enum Cities {
