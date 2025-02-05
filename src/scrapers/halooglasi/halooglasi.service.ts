@@ -141,6 +141,7 @@ export class HalooglasiService {
         property.ImgLinks = this.utilService
             .getDataFromJsonString<string[]>(productJson, HalooglasiSelectors.PropertyImageLinksSelector, [])
             .map(l => this.utilService.getConcatedUrl(HalooglasiUrls.ImageLinkUrl, l));
+        property.Description = this.utilService.getDataFromJsonString<string>(productJson, HalooglasiSelectors.PropertyDescriptionSelector, Defaults.StringDefault);
 
         return property;
     }

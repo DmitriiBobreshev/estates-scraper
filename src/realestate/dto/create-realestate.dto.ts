@@ -20,4 +20,5 @@ export class CreateRealEstateDto {
   TotalFloors?: number;
   AdditionalInfo?: string[];
   ImgLinks?: string[];
+  Description: string;
 }

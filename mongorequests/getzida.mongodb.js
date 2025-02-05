@@ -10,12 +10,12 @@
 // https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
 
 // Select the database to use.
-use('nekritne');
+use('test');
 
 // Insert a few documents into the sales collection.
 db.getCollection('realestates').find({
   SourceType: "4Zida",
-  LastScrapedAt: { $gt: Date.now() - (60 * 60 * 1000)  }
+  // LastScrapedAt: { $gt: Date.now() - (60 * 60 * 1000)  }
 }).limit(10).toArray();
 
 // db.getCollection('realestates').find({

@@ -59,6 +59,9 @@ export class RealEstates {
 
   @Prop()
   ImgLinks: string[];
+
+  @Prop()
+  Description: string;
 }
 
 export const RealEstatesSchema = SchemaFactory.createForClass(RealEstates);

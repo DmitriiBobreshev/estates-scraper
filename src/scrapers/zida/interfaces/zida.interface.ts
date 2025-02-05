@@ -5,7 +5,9 @@ export enum ZidaSelectors {
     SpanSelector = 'span',
     LinkSelector = 'a',
     H1Selector = 'h1',
+    H2Selector = 'h2',
     HrefAttribute = 'href',
+    OpisText = 'Opis oglasa'
 }
 
 export enum ZidaUrls {

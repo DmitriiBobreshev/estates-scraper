@@ -152,6 +152,9 @@ export class ZidaService {
             property.Price = parseFloat(title[title.length - 2].trim().replace(".", ''));
             property.ImgLinks = images;
 
+            const description = [...page.querySelectorAll(ZidaSelectors.DivSelector)].find(e => e.innerText.includes(ZidaSelectors.OpisText));
+            property.Description = description.parentNode.innerText.split('\n').filter(e => e).join('\n');
+
             return property;
         } catch (e) {
             throw new Error(`Failed to scrap product ${productUrl}, Content: ${content} Error: ${e}`);

@@ -14,6 +14,7 @@ export enum HalooglasiSelectors {
     PropertyPriceSelector = '"cena_d"',
     PropertyAdditionalInfoSelector = '"dodatno_ss"',
     PropertyImageLinksSelector = '"ImageURLs"',
+    PropertyDescriptionSelector = '"TextHtml"',
 }
 
 export enum HalooglasiUrls {
