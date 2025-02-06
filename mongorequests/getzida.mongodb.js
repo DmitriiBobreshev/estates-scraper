@@ -13,12 +13,12 @@
 use('test');
 
 // Insert a few documents into the sales collection.
-db.getCollection('realestates').find({
-  SourceType: "4Zida",
-  // LastScrapedAt: { $gt: Date.now() - (60 * 60 * 1000)  }
-}).limit(10).toArray();
-
 // db.getCollection('realestates').find({
-//   SourceType: "4Zida",
+//   SourceType: "CityExpert",
 //   // LastScrapedAt: { $gt: Date.now() - (60 * 60 * 1000)  }
-// }).count();
+// }).limit(10).toArray();
+
+db.getCollection('realestates').find({
+  SourceType: "CityExpert",
+  // LastScrapedAt: { $gt: Date.now() - (60 * 60 * 1000)  }
+}).count();

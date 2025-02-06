@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { UtilService } from 'src/common/providers/utils.service';
 import { RealestateService } from 'src/realestate/realestate.service';
 import { ScraperStatus, ScraperType, ScrapLogType } from 'src/scraplog/interfaces/scraperlog.interface';
 import { ScrapStatusService } from 'src/scraplog/scraplog.service';
-import { Cities, CitiesURIs, CityExpertRequest, PropType, rentOrSale, URIs } from './interfaces/cityexpert.interface';
+import { Cities, CitiesURIs, PropType, rentOrSale, URIs } from './interfaces/cityexpert.interface';
 import { CreateRealEstateDto } from 'src/realestate/dto';
 import { ListeningType, PropertyType, SourceType } from 'src/realestate/interfaces/realestate.interface';
 
@@ -14,6 +14,7 @@ export class CityexpertService {
   private isErrorHappened: boolean = false;
   private inProgress = false;
   private recordsParsed = 0;
+  private readonly logger = new Logger(CityexpertService.name, { timestamp: true });
 
   constructor(
     private readonly scrapService: ScrapStatusService,
@@ -29,13 +30,19 @@ export class CityexpertService {
   })
   async handleCron() {
     try {
-      console.log('starat')
-      if (this.inProgress) return;
+      if (this.inProgress) {
+        this.logger.warn('Cron job already in progress');
+        return;
+      }
+      this.logger.log('Cron job started');
 
       this.recordsParsed = 0;
       this.inProgress = true;
       await this.startScrap();
+    } catch (e) {
+      this.logger.error('Error in cron job: ' + e);
     } finally {
+      this.logger.log('Cron job finished');
       // @TODO uncommit in prod
       // this.inProgress = false;
     }
@@ -78,19 +85,25 @@ export class CityexpertService {
 
   private async scrapSingle(url: URIs, city: CitiesURIs, listeningType: rentOrSale) {
     const baseUrl = page => `${url}${city}?currentPage=${page}`;
+    const urls: Set<string> = new Set();
     let page = 1;
 
     while (true) {
       try {
         const estates = await this.scrapPage(baseUrl(page), listeningType);
         page++;
-        if (estates.length === 0) break;
+        for (const e of estates) {
+          if (urls.has(e.Link)) return;
+          urls.add(e.Link);
+        }
 
         await this.realEstateService.createMany(estates);
         this.recordsParsed += estates.length;
-
+        this.logger.verbose(`Scrapped ${estates.length} records for ${city} ${listeningType} page ${page}`);
       } catch (e) {
         this.isErrorHappened = true;
+        
+        this.logger.error(`Failed to scrap page ${url} for ${city} ${listeningType}, Error: ${e}`); 
         this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap page ${url}, Error: ${e}`);
       }
     }
@@ -112,6 +125,9 @@ export class CityexpertService {
         const propertyDetails = await this.scrapProductDetails(propertyUrl, listeningType);
         resArr.push(propertyDetails);
       } catch (e) {
+        this.isErrorHappened = true;
+
+        this.logger.error(`Failed to scrap product ${propertyUrl}, Error: ${e}`);
         this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, e.message);
       }
     }

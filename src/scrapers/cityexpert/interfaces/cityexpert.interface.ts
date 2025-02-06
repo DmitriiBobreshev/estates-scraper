@@ -25,11 +25,3 @@ export enum rentOrSale {
   Rent = 'r',
   Sale = 's'
 };
-
-export interface CityExpertRequest {
-  ptId: PropType[];
-  cityId: Cities;
-  rentOrSale: rentOrSale;
-  sort: 'datedsc',
-  currentPage: number;
-}
