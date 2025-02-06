@@ -1,19 +1,19 @@
 export enum CitiesURIs {
   Beograd = 'beograd',
   NoviSad = 'novi-sad',
-  Nis = 'nis'
+  Nis = 'nis',
 }
 
 export enum URIs {
-  Sale = "https://cityexpert.rs/prodaja-nekretnina/",
-  Rent = "https://cityexpert.rs/izdavanje-nekretnina/",
-  APIURI = "https://cityexpert.rs/api/PropertyView/"
+  Sale = 'https://cityexpert.rs/prodaja-nekretnina/',
+  Rent = 'https://cityexpert.rs/izdavanje-nekretnina/',
+  APIURI = 'https://cityexpert.rs/api/PropertyView/',
 }
 
 export enum Cities {
   Beograd = 1,
   NoviSad = 2,
-  Nis = 3
+  Nis = 3,
 }
 export enum PropType {
   Apartment = 1,
@@ -23,5 +23,5 @@ export enum PropType {
 
 export enum rentOrSale {
   Rent = 'r',
-  Sale = 's'
-};
+  Sale = 's',
+}

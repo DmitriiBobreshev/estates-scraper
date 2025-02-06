@@ -1,3 +1,3 @@
-import { CreateRealEstateDto } from './create-realestate.dto'; 
+import { CreateRealEstateDto } from './create-realestate.dto';
 
 export { CreateRealEstateDto };

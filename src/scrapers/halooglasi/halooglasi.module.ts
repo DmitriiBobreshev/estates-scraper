@@ -5,10 +5,7 @@ import { UtilService } from 'src/common/providers/utils.service';
 import { RealestateModule } from 'src/realestate/realestate.module';
 
 @Module({
-    imports: [
-        ScrapStatusModule.register(),
-        RealestateModule.register(),
-    ],
-    providers: [HalooglasiService, UtilService]
+  imports: [ScrapStatusModule.register(), RealestateModule.register()],
+  providers: [HalooglasiService, UtilService],
 })
 export class HalooglasiModule {}

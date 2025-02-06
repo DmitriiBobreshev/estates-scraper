@@ -7,10 +7,10 @@ export type ScraperLogDocument = HydratedDocument<ScrapStatusLog>;
 @Schema()
 export class ScrapStatusLog {
   @Prop({ required: true })
-  status: ScraperStatus
+  status: ScraperStatus;
 
   @Prop({ required: true })
-  scraperType: ScraperType
+  scraperType: ScraperType;
 
   @Prop({ required: true })
   createdAt: number;

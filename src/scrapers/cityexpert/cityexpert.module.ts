@@ -5,10 +5,7 @@ import { ScrapStatusModule } from 'src/scraplog/scraplog.module';
 import { RealestateModule } from 'src/realestate/realestate.module';
 
 @Module({
-  imports: [
-    ScrapStatusModule.register(),
-    RealestateModule.register(),
-  ],
-  providers: [CityexpertService, UtilService]
+  imports: [ScrapStatusModule.register(), RealestateModule.register()],
+  providers: [CityexpertService, UtilService],
 })
-export class CityexpertModule { }
+export class CityexpertModule {}

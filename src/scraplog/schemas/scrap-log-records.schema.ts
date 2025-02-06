@@ -19,4 +19,5 @@ export class ScrapLogRecords {
   createdAt: number;
 }
 
-export const ScrapLogRecordsSchema = SchemaFactory.createForClass(ScrapLogRecords);
+export const ScrapLogRecordsSchema =
+  SchemaFactory.createForClass(ScrapLogRecords);

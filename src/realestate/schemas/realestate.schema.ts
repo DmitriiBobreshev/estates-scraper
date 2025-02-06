@@ -1,6 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { ListeningType, PropertyType, SourceType } from '../interfaces/realestate.interface';
+import {
+  ListeningType,
+  PropertyType,
+  SourceType,
+} from '../interfaces/realestate.interface';
 
 export type RealEstatesDocument = HydratedDocument<RealEstates>;
 
@@ -18,19 +22,19 @@ export class RealEstates {
   @Prop({ required: true, index: true })
   SourceType: SourceType;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   ListeningType: ListeningType;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   LastScrapedAt: number;
 
   @Prop()
   LocationCoords: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   Location: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   Microlocation: string;
 
   @Prop()
@@ -48,10 +52,10 @@ export class RealEstates {
   @Prop()
   TotalFloors: number;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   PropertyType: PropertyType;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   Price: number;
 
   @Prop()

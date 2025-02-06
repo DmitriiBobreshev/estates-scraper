@@ -3,7 +3,6 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 
 import { ScrapStatusService } from './scraplog/scraplog.service';
 
-
 @Controller()
 export class AppController {
   constructor(
@@ -13,17 +12,17 @@ export class AppController {
 
   @Get()
   async getAllStatuses() {
-    const r = await this.scrapService.getAllStatuses(); 
-    const f: any = r.map(s => {
-      return { 
+    const r = await this.scrapService.getAllStatuses();
+    const f: any = r.map((s) => {
+      return {
         id: s._id.toString(),
         status: s.status,
         scraperType: s.scraperType,
-        createdAt: new Date(s.createdAt).toISOString(),  
+        createdAt: new Date(s.createdAt).toISOString(),
       };
     });
 
-    return f; 
+    return f;
   }
 
   @Get('/records')
@@ -43,7 +42,7 @@ export class AppController {
         timeZone: cronJob.cronTime.timeZone,
         nexDate: cronJob.nextDate(),
         lastRun: cronJob.lastDate(),
-        isRunning: cronJob.running
+        isRunning: cronJob.running,
       });
     }
     return res;

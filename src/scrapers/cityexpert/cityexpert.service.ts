@@ -2,11 +2,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { UtilService } from 'src/common/providers/utils.service';
 import { RealestateService } from 'src/realestate/realestate.service';
-import { ScraperStatus, ScraperType, ScrapLogType } from 'src/scraplog/interfaces/scraperlog.interface';
+import {
+  ScraperStatus,
+  ScraperType,
+  ScrapLogType,
+} from 'src/scraplog/interfaces/scraperlog.interface';
 import { ScrapStatusService } from 'src/scraplog/scraplog.service';
-import { Cities, CitiesURIs, PropType, rentOrSale, URIs } from './interfaces/cityexpert.interface';
+import {
+  Cities,
+  CitiesURIs,
+  PropType,
+  rentOrSale,
+  URIs,
+} from './interfaces/cityexpert.interface';
 import { CreateRealEstateDto } from 'src/realestate/dto';
-import { ListeningType, PropertyType, SourceType } from 'src/realestate/interfaces/realestate.interface';
+import {
+  ListeningType,
+  PropertyType,
+  SourceType,
+} from 'src/realestate/interfaces/realestate.interface';
 
 @Injectable()
 export class CityexpertService {
@@ -14,19 +28,21 @@ export class CityexpertService {
   private isErrorHappened: boolean = false;
   private inProgress = false;
   private recordsParsed = 0;
-  private readonly logger = new Logger(CityexpertService.name, { timestamp: true });
+  private readonly logger = new Logger(CityexpertService.name, {
+    timestamp: true,
+  });
 
   constructor(
     private readonly scrapService: ScrapStatusService,
     private readonly realEstateService: RealestateService,
     private readonly utilService: UtilService,
-  ) { }
+  ) {}
 
   // @TODO change on 12 hours
   @Cron(CronExpression.EVERY_5_SECONDS, {
     name: ScraperType.CityExpert,
     timeZone: 'Europe/Belgrade',
-    disabled: true
+    disabled: true,
   })
   async handleCron() {
     try {
@@ -83,8 +99,12 @@ export class CityexpertService {
     ]);
   }
 
-  private async scrapSingle(url: URIs, city: CitiesURIs, listeningType: rentOrSale) {
-    const baseUrl = page => `${url}${city}?currentPage=${page}`;
+  private async scrapSingle(
+    url: URIs,
+    city: CitiesURIs,
+    listeningType: rentOrSale,
+  ) {
+    const baseUrl = (page) => `${url}${city}?currentPage=${page}`;
     const urls: Set<string> = new Set();
     let page = 1;
 
@@ -99,43 +119,71 @@ export class CityexpertService {
 
         await this.realEstateService.createMany(estates);
         this.recordsParsed += estates.length;
-        this.logger.verbose(`Scrapped ${estates.length} records for ${city} ${listeningType} page ${page}`);
+        this.logger.verbose(
+          `Scrapped ${estates.length} records for ${city} ${listeningType} page ${page}`,
+        );
       } catch (e) {
         this.isErrorHappened = true;
-        
-        this.logger.error(`Failed to scrap page ${url} for ${city} ${listeningType}, Error: ${e}`); 
-        this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, `Failed to scrap page ${url}, Error: ${e}`);
+
+        this.logger.error(
+          `Failed to scrap page ${url} for ${city} ${listeningType}, Error: ${e}`,
+        );
+        this.scrapService.logScrapRecord(
+          this.logId,
+          ScrapLogType.Error,
+          `Failed to scrap page ${url}, Error: ${e}`,
+        );
       }
     }
   }
 
-  private async scrapPage(url: string, listeningType: rentOrSale): Promise<CreateRealEstateDto[]> {
+  private async scrapPage(
+    url: string,
+    listeningType: rentOrSale,
+  ): Promise<CreateRealEstateDto[]> {
     const resArr: CreateRealEstateDto[] = [];
-    const cleanUrl = url.slice(0, url.indexOf('?')).replace(/https|http:\/\//, '');
+    const cleanUrl = url
+      .slice(0, url.indexOf('?'))
+      .replace(/https|http:\/\//, '');
     const page = await this.utilService.getHtmlFromUrl(url);
-    const properties = [...page.querySelectorAll('app-property-card')]
-      .map(e => {
-        const ref = [...e.querySelectorAll('a')].find(e => e?.getAttribute('href')?.includes(cleanUrl));
+    const properties = [...page.querySelectorAll('app-property-card')].map(
+      (e) => {
+        const ref = [...e.querySelectorAll('a')].find((e) =>
+          e?.getAttribute('href')?.includes(cleanUrl),
+        );
         return ref?.getAttribute('href');
-      });
+      },
+    );
 
     for (const propertyUrl of properties) {
       if (!propertyUrl) continue;
       try {
-        const propertyDetails = await this.scrapProductDetails(propertyUrl, listeningType);
+        const propertyDetails = await this.scrapProductDetails(
+          propertyUrl,
+          listeningType,
+        );
         resArr.push(propertyDetails);
       } catch (e) {
         this.isErrorHappened = true;
 
-        this.logger.error(`Failed to scrap product ${propertyUrl}, Error: ${e}`);
-        this.scrapService.logScrapRecord(this.logId, ScrapLogType.Error, e.message);
+        this.logger.error(
+          `Failed to scrap product ${propertyUrl}, Error: ${e}`,
+        );
+        this.scrapService.logScrapRecord(
+          this.logId,
+          ScrapLogType.Error,
+          e.message,
+        );
       }
     }
 
     return resArr;
   }
 
-  private async scrapProductDetails(propUrl: string, listeningType: rentOrSale): Promise<CreateRealEstateDto> {
+  private async scrapProductDetails(
+    propUrl: string,
+    listeningType: rentOrSale,
+  ): Promise<CreateRealEstateDto> {
     try {
       const property = new CreateRealEstateDto();
       const uArr = propUrl.split('/');
@@ -145,11 +193,19 @@ export class CityexpertService {
       property.ProperyId = json.propId;
       property.City = Cities[json.cityId];
       property.SourceType = SourceType.CityExpert;
-      property.ListeningType = listeningType === rentOrSale.Rent ? ListeningType.Rent : ListeningType.Sale;
+      property.ListeningType =
+        listeningType === rentOrSale.Rent
+          ? ListeningType.Rent
+          : ListeningType.Sale;
       property.LastScrapedAt = Date.now();
       property.Location = json.municipality;
-      property.Microlocation = json.neighbourhoods.join(', ') || "N/A";
-      property.PropertyType = json.ptId === PropType.Apartment ? PropertyType.Apartment : json.ptId === PropType.House ? PropertyType.House : PropertyType.Apartment;
+      property.Microlocation = json.neighbourhoods.join(', ') || 'N/A';
+      property.PropertyType =
+        json.ptId === PropType.Apartment
+          ? PropertyType.Apartment
+          : json.ptId === PropType.House
+            ? PropertyType.House
+            : PropertyType.Apartment;
       property.Price = json.price;
       property.LocationCoords = json.mapLat + ',' + json.mapLng;
       property.Street = json.street;
@@ -158,7 +214,10 @@ export class CityexpertService {
       property.Floor = json.floor;
       property.AdditionalInfo = null;
       property.Description = null;
-      property.ImgLinks = json.onsite.imgFiles.map((img: any) => `https://img.cityexpert.rs/sites/default/files/styles/720x/public/image/${img}`);
+      property.ImgLinks = json.onsite.imgFiles.map(
+        (img: any) =>
+          `https://img.cityexpert.rs/sites/default/files/styles/720x/public/image/${img}`,
+      );
       property.Link = propUrl;
 
       return property;

@@ -1,4 +1,8 @@
-import { ListeningType, PropertyType, SourceType } from "../interfaces/realestate.interface";
+import {
+  ListeningType,
+  PropertyType,
+  SourceType,
+} from '../interfaces/realestate.interface';
 
 export class CreateRealEstateDto {
   ProperyId: string;

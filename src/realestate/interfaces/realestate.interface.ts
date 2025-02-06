@@ -1,21 +1,20 @@
-
 export enum SourceType {
-    Halooglasi = 'Halooglasi',
-    Nekretnine = 'Nekretnine',
-    Zida = '4Zida',
-    CityExpert = 'CityExpert'
-} 
+  Halooglasi = 'Halooglasi',
+  Nekretnine = 'Nekretnine',
+  Zida = '4Zida',
+  CityExpert = 'CityExpert',
+}
 
 export enum PropertyType {
-    Apartment = 'Apartment',
-    House = 'House',
-    Land = 'Land',
-    Garage = 'Garage',
-    Business = 'Business',
-    Other = 'Other'
+  Apartment = 'Apartment',
+  House = 'House',
+  Land = 'Land',
+  Garage = 'Garage',
+  Business = 'Business',
+  Other = 'Other',
 }
 
 export enum ListeningType {
-    Sale = 'Sale',
-    Rent = 'Rent'
+  Sale = 'Sale',
+  Rent = 'Rent',
 }

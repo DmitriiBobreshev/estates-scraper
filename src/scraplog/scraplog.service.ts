@@ -4,7 +4,11 @@ import { ScrapStatusLog } from './schemas/scrap-status.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { CreateStatusRecordDto, UpdateStatusRecordDto } from './dto';
-import { ScraperStatus, ScraperType, ScrapLogType } from './interfaces/scraperlog.interface';
+import {
+  ScraperStatus,
+  ScraperType,
+  ScrapLogType,
+} from './interfaces/scraperlog.interface';
 import { ScrapLogRecords } from './schemas/scrap-log-records.schema';
 import { CreateScrapLogRecordDto } from './dto/craete-scrap-log-record.dto';
 
@@ -13,9 +17,11 @@ export class ScrapStatusService {
   private readonly logger = new Logger(ScrapStatusService.name);
 
   constructor(
-    @InjectModel(ScrapStatusLog.name) private scraperLogModel: Model<ScrapStatusLog>,
-    @InjectModel(ScrapLogRecords.name) private scraperLogRecordsModel: Model<ScrapLogRecords>,
-  ) { }
+    @InjectModel(ScrapStatusLog.name)
+    private scraperLogModel: Model<ScrapStatusLog>,
+    @InjectModel(ScrapLogRecords.name)
+    private scraperLogRecordsModel: Model<ScrapLogRecords>,
+  ) {}
 
   startScrap(scraperType: ScraperType) {
     const record = new CreateStatusRecordDto();
@@ -42,7 +48,9 @@ export class ScrapStatusService {
       record.createdAt = Date.now();
       await this.scraperLogRecordsModel.create(record);
     } catch (error) {
-      this.logger.error(`Failed to log scrap record: ${error}, message: ${message}`);
+      this.logger.error(
+        `Failed to log scrap record: ${error}, message: ${message}`,
+      );
     }
   }
 
@@ -54,7 +62,9 @@ export class ScrapStatusService {
 
   // @TODO TEST METHOD
   async getAllRecords() {
-    const res = await this.scraperLogRecordsModel.find().sort({ createdAt: -1 });
+    const res = await this.scraperLogRecordsModel
+      .find()
+      .sort({ createdAt: -1 });
     return res;
   }
 }

@@ -22,6 +22,6 @@ import { CityexpertModule } from './scrapers/cityexpert/cityexpert.module';
     ZidaModule,
     CityexpertModule,
   ],
-  controllers: [AppController]
+  controllers: [AppController],
 })
 export class AppModule {}

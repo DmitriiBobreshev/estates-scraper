@@ -4,7 +4,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RealEstates, RealEstatesSchema } from './schemas/realestate.schema';
 
 @Module({
-   imports: [MongooseModule.forFeature([{ name: RealEstates.name, schema: RealEstatesSchema }])]
+  imports: [
+    MongooseModule.forFeature([
+      { name: RealEstates.name, schema: RealEstatesSchema },
+    ]),
+  ],
 })
 export class RealestateModule {
   static register(): DynamicModule {

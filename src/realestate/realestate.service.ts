@@ -7,42 +7,52 @@ import { CreateRealEstateDto } from './dto';
 
 @Injectable()
 export class RealestateService {
-    constructor(@InjectModel(RealEstates.name) private scraperLogModel: Model<RealEstates>) {}
+  constructor(
+    @InjectModel(RealEstates.name) private scraperLogModel: Model<RealEstates>,
+  ) {}
 
-    async createProperty(property: CreateRealEstateDto) {
-        const createdProperty = new this.scraperLogModel(property);
-        await createdProperty.save();
-        return null;
-    }
+  async createProperty(property: CreateRealEstateDto) {
+    const createdProperty = new this.scraperLogModel(property);
+    await createdProperty.save();
+    return null;
+  }
 
-    async updateProperty(property: CreateRealEstateDto) {
+  async updateProperty(property: CreateRealEstateDto) {
+    const foundProperty = await this.findProperty(property);
+    if (foundProperty)
+      await this.scraperLogModel.findByIdAndUpdate(foundProperty.id, property, {
+        new: true,
+      });
+    return null;
+  }
+
+  private async findProperty(property: CreateRealEstateDto) {
+    return await this.scraperLogModel.findOne({
+      ProperyId: property.ProperyId,
+      SourceType: property.SourceType,
+    });
+  }
+
+  async createMany(properties: CreateRealEstateDto[]) {
+    for (const property of properties) {
+      try {
         const foundProperty = await this.findProperty(property);
-        if (foundProperty) await this.scraperLogModel.findByIdAndUpdate(foundProperty.id, property, { new: true });
-        return null;
-    }
 
-    private async findProperty(property: CreateRealEstateDto) {
-        return await this.scraperLogModel.findOne({
-            ProperyId: property.ProperyId,
-            SourceType: property.SourceType,
-        });
-    }
-
-    async createMany(properties: CreateRealEstateDto[]) {
-        for (const property of properties) {
-            try {
-                const foundProperty = await this.findProperty(property);
-
-                if (foundProperty) {
-                    await this.scraperLogModel.findByIdAndUpdate(foundProperty.id, property, { new: true });
-                } else {
-                    await this.createProperty(property);
-                }
-            } catch (error) {
-                throw new Error(`Error while creating property: ${JSON.stringify(property)}, error: ${error}`);
-            }
-            
+        if (foundProperty) {
+          await this.scraperLogModel.findByIdAndUpdate(
+            foundProperty.id,
+            property,
+            { new: true },
+          );
+        } else {
+          await this.createProperty(property);
         }
-        return null;
+      } catch (error) {
+        throw new Error(
+          `Error while creating property: ${JSON.stringify(property)}, error: ${error}`,
+        );
+      }
     }
+    return null;
+  }
 }

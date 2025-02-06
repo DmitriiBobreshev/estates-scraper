@@ -1,4 +1,4 @@
-import { ScraperStatus } from "../interfaces/scraperlog.interface";
+import { ScraperStatus } from '../interfaces/scraperlog.interface';
 
 export class UpdateStatusRecordDto {
   status: ScraperStatus;
