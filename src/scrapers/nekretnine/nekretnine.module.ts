@@ -5,7 +5,7 @@ import { RealestateModule } from 'src/realestate/realestate.module';
 import { UtilService } from 'src/common/providers/utils.service';
 
 @Module({
-  imports: [ScrapStatusModule.register(), RealestateModule.register()],
+  imports: [ScrapStatusModule, RealestateModule],
   providers: [NekretnineService, UtilService]
 })
 export class NekretnineModule {}

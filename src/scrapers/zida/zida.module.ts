@@ -5,7 +5,7 @@ import { UtilService } from 'src/common/providers/utils.service';
 import { RealestateModule } from 'src/realestate/realestate.module';
 
 @Module({
-  imports: [ScrapStatusModule.register(), RealestateModule.register()],
+  imports: [ScrapStatusModule, RealestateModule],
   providers: [ZidaService, UtilService],
 })
 export class ZidaModule {}

@@ -9,13 +9,7 @@ import { RealEstates, RealEstatesSchema } from './schemas/realestate.schema';
       { name: RealEstates.name, schema: RealEstatesSchema },
     ]),
   ],
+  providers: [RealestateService],
+  exports: [RealestateService],
 })
-export class RealestateModule {
-  static register(): DynamicModule {
-    return {
-      module: RealestateModule,
-      providers: [RealestateService],
-      exports: [RealestateService],
-    };
-  }
-}
+export class RealestateModule {}

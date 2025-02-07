@@ -7,16 +7,16 @@ import { AppController } from './app.controller';
 import { ScrapStatusModule } from './scraplog/scraplog.module';
 import { CronController } from './cron/cron.controller';
 import { CronModule } from './cron/cron.module';
+import { ScraplogController } from './scraplog/scraplog.controller';
 
 const connectionString = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}`;
 
 @Module({
   imports: [
     MongooseModule.forRoot(connectionString),
-    ScrapStatusModule.register(),
-
+    ScrapStatusModule,
     CronModule,
   ],
-  controllers: [AppController, CronController],
+  controllers: [AppController, CronController, ScraplogController],
 })
 export class AppModule {}

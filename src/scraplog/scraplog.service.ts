@@ -23,20 +23,20 @@ export class ScrapStatusService {
     private scraperLogRecordsModel: Model<ScrapLogRecords>,
   ) {}
 
-  startScrap(scraperType: ScraperType) {
+  async startScrap(scraperType: ScraperType) {
     const record = new CreateStatusRecordDto();
     record.status = ScraperStatus.InProgress;
     record.createdAt = Date.now();
     record.scraperType = scraperType;
 
-    return this.scraperLogModel.create(record);
+    return await this.scraperLogModel.create(record);
   }
 
-  finishScrap(id: string, status: ScraperStatus) {
+  async finishScrap(id: string, status: ScraperStatus) {
     const record = new UpdateStatusRecordDto();
     record.status = status;
     record.updatedAt = Date.now();
-    return this.scraperLogModel.findByIdAndUpdate(id, record, { new: true });
+    return await this.scraperLogModel.findByIdAndUpdate(id, record, { new: true });
   }
 
   async logScrapRecord(scraperId: string, type: ScrapLogType, message: string) {
@@ -54,16 +54,33 @@ export class ScrapStatusService {
     }
   }
 
-  // @TODO TEST METHOD
-  async getAllStatuses() {
-    const res = await this.scraperLogModel.find().sort({ createdAt: -1 });
-    return res;
+  async getStatuses(dateFrom?: number, dateTo?: number) {
+    if (dateFrom || dateTo) {
+      const createdAt = {};
+      if (dateFrom) createdAt['$gte'] = dateFrom;
+      if (dateTo) createdAt['$lte'] = dateTo;
+
+      return await this.scraperLogModel.find({
+        createdAt: { $gte: dateFrom, $lte: dateTo },
+      }).sort({ createdAt: -1 });
+    } 
+
+    return await this.scraperLogModel.find({
+    }).sort({ createdAt: -1 });
   }
 
-  // @TODO TEST METHOD
   async getAllRecords() {
     const res = await this.scraperLogRecordsModel
       .find()
+      .sort({ createdAt: -1 });
+    return res;
+  }
+
+  async getRecordByJobId(jobId: string) {
+    const res = await this.scraperLogRecordsModel
+      .find({
+        scraperId: jobId,
+      })
       .sort({ createdAt: -1 });
     return res;
   }

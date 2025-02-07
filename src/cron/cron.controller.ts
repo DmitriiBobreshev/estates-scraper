@@ -7,7 +7,7 @@ export class CronController {
     private schedulerRegistry: SchedulerRegistry,
   ) {}
 
-  @Get('/cron')
+  @Get('')
   async getCronTabJobs(): Promise<Array<object>> {
     const jobs = this.schedulerRegistry.getCronJobs();
     const res = [];
@@ -25,7 +25,7 @@ export class CronController {
     return res;
   }
 
-  @Get('/cron/start')
+  @Get('/start')
   async startCronTabForAll(): Promise<void> {
     const jobs = this.schedulerRegistry.getCronJobs();
     for (const job of jobs.values()) {
@@ -34,17 +34,22 @@ export class CronController {
     }
   }
 
-  @Get('/cron/:id/start')
+  @Get('/:id/start')
   async startCronTabForSpecificJob(@Param('id') id: string): Promise<void> {
     const jobs = this.schedulerRegistry.getCronJobs();
     const job = jobs.get(id);
+    if (!job) throw Error('Job not found');
+
     job.runOnce = true;
     job.start();
   }
 
-  @Get('/cron/:id/stop')
+  @Get('/:id/stop')
   async stopCronTabForSpecificJob(@Param('id') id: string): Promise<void> {
     const jobs = this.schedulerRegistry.getCronJobs();
-    jobs.get(id)?.stop();
+    const job = jobs.get(id);
+    if (!job) throw Error('Job not found');
+
+    job.stop();
   }
 }

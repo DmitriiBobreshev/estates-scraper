@@ -10,6 +10,7 @@ import {
   ScrapLogRecords,
   ScrapLogRecordsSchema,
 } from './schemas/scrap-log-records.schema';
+import { ScraplogController } from './scraplog.controller';
 
 @Module({
   imports: [
@@ -18,13 +19,8 @@ import {
       { name: ScrapLogRecords.name, schema: ScrapLogRecordsSchema },
     ]),
   ],
+  providers: [ScrapStatusService],
+  controllers: [ScraplogController],
+  exports: [ScrapStatusService],
 })
-export class ScrapStatusModule {
-  static register(): DynamicModule {
-    return {
-      module: ScrapStatusModule,
-      providers: [ScrapStatusService],
-      exports: [ScrapStatusService],
-    };
-  }
-}
+export class ScrapStatusModule {}
