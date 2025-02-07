@@ -225,7 +225,7 @@ export class ZidaService {
 
       return property;
     } catch (e) {
-      throw new Error(`Failed to scrap product ${productUrl}, Error: ${e}`);
+      throw new Error(`Failed to scrap product ${productUrl}, Error: ${e} content: ${content}`);
     }
   }
 }
