@@ -1,17 +1,18 @@
 import { Controller, UseGuards } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { CronJob, Empty, JobMessage, StatusMessage } from './interfaces/cron.interface';
+import {
+  CronJob,
+  JobMessage,
+  StatusMessage,
+} from './interfaces/cron.interface';
 import { Observable, Subject } from 'rxjs';
 import { ApiKeyGuard } from 'src/apikey/apikey.guard';
-
 
 @UseGuards(ApiKeyGuard)
 @Controller('cron')
 export class CronController {
-  constructor(
-    private schedulerRegistry: SchedulerRegistry,
-  ) { }
+  constructor(private schedulerRegistry: SchedulerRegistry) {}
 
   @GrpcMethod('CronService', 'GetCronTabJobs')
   getCronTabJobsGRPC(): Observable<CronJob> {
@@ -39,7 +40,7 @@ export class CronController {
   }
 
   @GrpcMethod('CronService', 'StartCronTabForAll')
-  StartCronTabForAll(data: Empty): StatusMessage {
+  StartCronTabForAll(): StatusMessage {
     try {
       const jobs = this.schedulerRegistry.getCronJobs();
       for (const job of jobs.values()) {
@@ -50,12 +51,12 @@ export class CronController {
       return {
         status: true,
         statusText: 'All jobs started',
-      }
+      };
     } catch (error) {
       return {
         status: false,
         statusText: error.message,
-      }
+      };
     }
   }
 
@@ -72,33 +73,33 @@ export class CronController {
       return {
         status: true,
         statusText: `Jobs ${data.id} started`,
-      }
+      };
     } catch (error) {
       return {
         status: false,
         statusText: error.message,
-      }
+      };
     }
   }
-  
+
   @GrpcMethod('CronService', 'StopCronTabForSpecificJob')
   StopCronTabForSpecificJob(data: JobMessage): StatusMessage {
     try {
       const jobs = this.schedulerRegistry.getCronJobs();
       const job = jobs.get(data.id);
       if (!job) throw Error('Job not found');
-  
+
       job.stop();
 
       return {
         status: true,
         statusText: `Jobs ${data.id} stopped`,
-      }
+      };
     } catch (error) {
       return {
         status: false,
         statusText: error.message,
-      }
+      };
     }
   }
 }

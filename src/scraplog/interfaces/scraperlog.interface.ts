@@ -18,26 +18,23 @@ export enum ScrapLogType {
   Error = 2,
 }
 
-
-export interface Empty {}
-
-export interface  GetJobsRequest {
+export interface GetJobsRequest {
   dateFrom: string;
   dateTo: string;
 }
 
-export interface  GetJobsResponse {
+export interface GetJobsResponse {
   id: string;
   status: ScraperStatus;
   scraperType: ScraperType;
   createdAt: string;
 }
 
-export interface  RecordIdRequest {
+export interface RecordIdRequest {
   JobId: string;
 }
 
-export interface  LogRecord {
+export interface LogRecord {
   recordId: string;
   jobId: string;
   type: any;

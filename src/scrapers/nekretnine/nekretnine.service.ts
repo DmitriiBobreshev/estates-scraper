@@ -2,11 +2,23 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { UtilService } from 'src/common/providers/utils.service';
 import { RealestateService } from 'src/realestate/realestate.service';
-import { ScraperStatus, ScraperType, ScrapLogType } from 'src/scraplog/interfaces/scraperlog.interface';
+import {
+  ScraperStatus,
+  ScraperType,
+  ScrapLogType,
+} from 'src/scraplog/interfaces/scraperlog.interface';
 import { ScrapStatusService } from 'src/scraplog/scraplog.service';
-import { NekretnineSelectors, Props, URIs } from './interfaces/nekretnine.interface';
+import {
+  NekretnineSelectors,
+  Props,
+  URIs,
+} from './interfaces/nekretnine.interface';
 import { CreateRealEstateDto } from 'src/realestate/dto';
-import { ListeningType, PropertyType, SourceType } from 'src/realestate/interfaces/realestate.interface';
+import {
+  ListeningType,
+  PropertyType,
+  SourceType,
+} from 'src/realestate/interfaces/realestate.interface';
 
 @Injectable()
 export class NekretnineService {
@@ -14,13 +26,15 @@ export class NekretnineService {
   private isErrorHappened: boolean = false;
   private inProgress = false;
   private recordsParsed = 0;
-  private readonly logger = new Logger(ScraperType.Nekretnine, { timestamp: true });
+  private readonly logger = new Logger(ScraperType.Nekretnine, {
+    timestamp: true,
+  });
 
   constructor(
     private readonly scrapService: ScrapStatusService,
     private readonly realEstateService: RealestateService,
     private readonly utilService: UtilService,
-  ) { }
+  ) {}
 
   // @TODO change on 12 hours
   @Cron(CronExpression.EVERY_5_SECONDS, {
@@ -65,7 +79,7 @@ export class NekretnineService {
   private async scrapAll() {
     await Promise.all([
       this.scrapSingle(URIs.Apartments),
-      this.scrapSingle(URIs.Houses)
+      this.scrapSingle(URIs.Houses),
     ]);
   }
 
@@ -82,9 +96,15 @@ export class NekretnineService {
           break;
         }
 
-        const estatesEnriched = estates.map(e => ({ ...e, PropertyType: URIs.Apartments === startUri ? PropertyType.Apartment : PropertyType.House }));
+        const estatesEnriched = estates.map((e) => ({
+          ...e,
+          PropertyType:
+            URIs.Apartments === startUri
+              ? PropertyType.Apartment
+              : PropertyType.House,
+        }));
         page++;
-        
+
         await this.realEstateService.createMany(estatesEnriched);
 
         this.recordsParsed += estatesEnriched.length;
@@ -111,14 +131,17 @@ export class NekretnineService {
     const pageDocument = await this.utilService.getHtmlFromUrl(pageUrl);
     if (!pageDocument) return resArr;
 
-    const propLinks = [...pageDocument
-      .querySelector(NekretnineSelectors.AdvertList)
-      .querySelectorAll(NekretnineSelectors.Offers)]
-      .map(e => `${URIs.BaseUrl}${e.querySelector(NekretnineSelectors.Link).getAttribute('href')}`);
+    const propLinks = [
+      ...pageDocument
+        .querySelector(NekretnineSelectors.AdvertList)
+        .querySelectorAll(NekretnineSelectors.Offers),
+    ].map(
+      (e) =>
+        `${URIs.BaseUrl}${e.querySelector(NekretnineSelectors.Link).getAttribute('href')}`,
+    );
 
     for (const link of propLinks) {
       try {
-
         const scrapProductDetails = await this.scrapProductDetails(link);
         if (scrapProductDetails.Price) resArr.push(scrapProductDetails);
       } catch (e) {
@@ -147,39 +170,56 @@ export class NekretnineService {
       const property = new CreateRealEstateDto();
 
       const document = await this.utilService.getHtmlFromUrl(productUrl);
-      const anamnesis = [...document.querySelectorAll(NekretnineSelectors.Details)].map(li => li.text.replace(/(\n|\s)+/g, " ").trim());
-      const location = [...document.querySelectorAll(NekretnineSelectors.Location)].map(li => li.textContent.trim());
-      const price = document.querySelector(NekretnineSelectors.Price).textContent.replace(/\s+/g, '');
-      const description = document.querySelector(NekretnineSelectors.Description)?.textContent.replace(/(\n|\s)+/g, " ").trim();
-      const imgs = [...document.querySelectorAll(NekretnineSelectors.Images)].map(img => img.getAttribute('src')).filter(e => !!e);
+      const anamnesis = [
+        ...document.querySelectorAll(NekretnineSelectors.Details),
+      ].map((li) => li.text.replace(/(\n|\s)+/g, ' ').trim());
+      const location = [
+        ...document.querySelectorAll(NekretnineSelectors.Location),
+      ].map((li) => li.textContent.trim());
+      const price = document
+        .querySelector(NekretnineSelectors.Price)
+        .textContent.replace(/\s+/g, '');
+      const description = document
+        .querySelector(NekretnineSelectors.Description)
+        ?.textContent.replace(/(\n|\s)+/g, ' ')
+        .trim();
+      const imgs = [...document.querySelectorAll(NekretnineSelectors.Images)]
+        .map((img) => img.getAttribute('src'))
+        .filter((e) => !!e);
 
-      const listeningType = this.getPropFromArr(anamnesis, Props.Transaction) === Props.Sell ? ListeningType.Sale : ListeningType.Rent;
-      const area = this.getPropFromArr(anamnesis, Props.Area) || this.getPropFromArr(anamnesis, Props.ProbableArea);
+      const listeningType =
+        this.getPropFromArr(anamnesis, Props.Transaction) === Props.Sell
+          ? ListeningType.Sale
+          : ListeningType.Rent;
+      const area =
+        this.getPropFromArr(anamnesis, Props.Area) ||
+        this.getPropFromArr(anamnesis, Props.ProbableArea);
       const rooms = this.getPropFromArr(anamnesis, Props.Rooms);
       const floor = this.getPropFromArr(anamnesis, Props.Floor);
       const totalFloors = this.getPropFromArr(anamnesis, Props.TotalFloors);
-      const dates = [...document.querySelectorAll(NekretnineSelectors.Updated)].map(li => li.textContent.trim());
+      const dates = [
+        ...document.querySelectorAll(NekretnineSelectors.Updated),
+      ].map((li) => li.textContent.trim());
       const publishDate = this.getPropFromArr(dates, Props.Published);
-     
+
       const coords = [...document.querySelectorAll(NekretnineSelectors.Script)]
-        ?.find(s => s.text.includes(Props.Lat) || s.text.includes(Props.Lng))
-        ?.textContent
-        ?.split(',')
-        ?.filter(c => c.includes(Props.Lat) || c.includes(Props.Lng))
-        ?.map(c => c.split('=')[1].trim())
+        ?.find((s) => s.text.includes(Props.Lat) || s.text.includes(Props.Lng))
+        ?.textContent?.split(',')
+        ?.filter((c) => c.includes(Props.Lat) || c.includes(Props.Lng))
+        ?.map((c) => c.split('=')[1].trim())
         ?.join(',');
       const splited = productUrl.split('/');
 
       property.ProperyId = splited[splited.length - 2];
-      property.City = location[2] || location[1] || location[0] || "N/A";
-      property.Link = productUrl; 
+      property.City = location[2] || location[1] || location[0] || 'N/A';
+      property.Link = productUrl;
       property.SourceType = SourceType.Nekretnine;
       property.ListeningType = listeningType;
       property.LastScrapedAt = Date.now();
       property.LocationCoords = coords;
-      property.Location = location[1] || location[0] || "N/A";
-      property.Microlocation = location[3] ?? "N/A";
-      property.Street = location[4] ?? "N/A";
+      property.Location = location[1] || location[0] || 'N/A';
+      property.Microlocation = location[3] ?? 'N/A';
+      property.Street = location[4] ?? 'N/A';
       property.Area = parseFloat(area) || 0;
       property.Rooms = parseFloat(rooms) || 0;
       property.Floor = floor;
@@ -206,6 +246,9 @@ export class NekretnineService {
   }
 
   private getPropFromArr(arr, key) {
-    return arr.find(a => a.toLocaleLowerCase().includes(key))?.split(':')[1].trim();
+    return arr
+      .find((a) => a.toLocaleLowerCase().includes(key))
+      ?.split(':')[1]
+      .trim();
   }
 }

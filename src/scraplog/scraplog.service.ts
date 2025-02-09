@@ -36,7 +36,9 @@ export class ScrapStatusService {
     const record = new UpdateStatusRecordDto();
     record.status = status;
     record.updatedAt = Date.now();
-    return await this.scraperLogModel.findByIdAndUpdate(id, record, { new: true });
+    return await this.scraperLogModel.findByIdAndUpdate(id, record, {
+      new: true,
+    });
   }
 
   async logScrapRecord(scraperId: string, type: ScrapLogType, message: string) {
@@ -60,13 +62,14 @@ export class ScrapStatusService {
       if (dateFrom) createdAt['$gte'] = dateFrom;
       if (dateTo) createdAt['$lte'] = dateTo;
 
-      return await this.scraperLogModel.find({
-        createdAt: { $gte: dateFrom, $lte: dateTo },
-      }).sort({ createdAt: -1 });
-    } 
+      return await this.scraperLogModel
+        .find({
+          createdAt: { $gte: dateFrom, $lte: dateTo },
+        })
+        .sort({ createdAt: -1 });
+    }
 
-    return await this.scraperLogModel.find({
-    }).sort({ createdAt: -1 });
+    return await this.scraperLogModel.find({}).sort({ createdAt: -1 });
   }
 
   async getAllRecords() {

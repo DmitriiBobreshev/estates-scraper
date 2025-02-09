@@ -105,7 +105,7 @@ export class ZidaService {
   ) {
     let page = 1;
     while (true) {
-      let url = `${baseUrl}?strana=${page}`;
+      const url = `${baseUrl}?strana=${page}`;
 
       try {
         const estates = await this.scrapPage(url);
@@ -226,7 +226,9 @@ export class ZidaService {
       property.FirstPublishedAt = 0;
       return property;
     } catch (e) {
-      throw new Error(`Failed to scrap product ${productUrl}, Error: ${e} content: ${content}`);
+      throw new Error(
+        `Failed to scrap product ${productUrl}, Error: ${e} content: ${content}`,
+      );
     }
   }
 }

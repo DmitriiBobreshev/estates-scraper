@@ -60,8 +60,8 @@ export class UtilService {
     if (comma === -1 || start === -1) return null;
 
     let result = '',
-      isQuotaOpen = false,
-      quotaChar = '"';
+      isQuotaOpen = false;
+    const quotaChar = '"';
     const endChar = ',',
       stack = [];
     const structs = {

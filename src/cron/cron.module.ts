@@ -7,13 +7,13 @@ import { ZidaModule } from 'src/scrapers/zida/zida.module';
 
 @Module({
   imports: [
-      ScheduleModule.forRoot(),
-      
-      // scap modules
-      HalooglasiModule,
-      ZidaModule,
-      CityexpertModule,
-      NekretnineModule,
-  ]
+    ScheduleModule.forRoot(),
+
+    // scap modules
+    HalooglasiModule,
+    ZidaModule,
+    CityexpertModule,
+    NekretnineModule,
+  ],
 })
 export class CronModule {}

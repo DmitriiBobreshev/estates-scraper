@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { RealestateService } from './realestate.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RealEstates, RealEstatesSchema } from './schemas/realestate.schema';
