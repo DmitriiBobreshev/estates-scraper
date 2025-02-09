@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import 'dotenv/config';
+import { MicroserviceOptions } from '@nestjs/microservices';
+import { grpcClientOptions } from './grpc-client.options';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +15,8 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
+  app.connectMicroservice<MicroserviceOptions>(grpcClientOptions);
+  await app.startAllMicroservices();
 
   await app.listen(process.env.PORT ?? 3000);
 }

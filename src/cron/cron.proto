@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package cron;
+
+service CronService {
+  rpc GetCronTabJobs (Empty) returns (stream CronJob) {}
+  rpc StartCronTabForAll (Empty) returns (StatusMessage) {}
+  rpc StartCronTabForSpecificJob (JobMessage) returns (StatusMessage) {}
+  rpc StopCronTabForSpecificJob (JobMessage) returns (StatusMessage) {}
+}
+
+message Empty {}
+
+message CronJob {
+  string name = 1;
+  string cronTime = 2;
+  string timeZone = 3;
+  string nexDate = 4;
+  string lastRun = 5;
+  bool isRunning = 6;
+}
+
+message StatusMessage {
+  bool status = 1;
+  string statusText = 2;
+}
+
+message JobMessage {
+  string id = 1;
+}
