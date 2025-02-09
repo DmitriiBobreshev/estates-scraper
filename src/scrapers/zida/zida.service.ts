@@ -37,7 +37,7 @@ export class ZidaService {
   @Cron(CronExpression.EVERY_5_SECONDS, {
     name: ScraperType.Zida,
     timeZone: 'Europe/Belgrade',
-    disabled: false,
+    disabled: true,
   })
   async handleCron() {
     try {
