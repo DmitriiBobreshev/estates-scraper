@@ -9,13 +9,15 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { ApiKeyGuard } from 'src/apikey/apikey.guard';
 
+import { CronTime } from "cron";
+
 @UseGuards(ApiKeyGuard)
 @Controller('cron')
 export class CronController {
   constructor(private schedulerRegistry: SchedulerRegistry) {}
 
   @GrpcMethod('CronService', 'GetCronTabJobs')
-  getCronTabJobsGRPC(): Observable<CronJob> {
+  GetCronTabJobs(): Observable<CronJob> {
     const job$ = new Subject<CronJob>();
     const jobs = this.schedulerRegistry.getCronJobs();
 
@@ -44,8 +46,27 @@ export class CronController {
     try {
       const jobs = this.schedulerRegistry.getCronJobs();
       for (const job of jobs.values()) {
-        job.runOnce = true;
         job.start();
+      }
+
+      return {
+        status: true,
+        statusText: 'All jobs started',
+      };
+    } catch (error) {
+      return {
+        status: false,
+        statusText: error.message,
+      };
+    }
+  }
+
+  @GrpcMethod('CronService', 'StopCronTabForAll')
+  StopCronTabForAll(): StatusMessage {
+    try {
+      const jobs = this.schedulerRegistry.getCronJobs();
+      for (const job of jobs.values()) {
+        job.stop();
       }
 
       return {
@@ -64,15 +85,13 @@ export class CronController {
   StartCronTabForSpecificJob(data: JobMessage): StatusMessage {
     try {
       const jobs = this.schedulerRegistry.getCronJobs();
-      const job = jobs.get(data.id);
+      const job = jobs.get(data.cronJobId);
       if (!job) throw Error('Job not found');
-
-      job.runOnce = true;
       job.start();
 
       return {
         status: true,
-        statusText: `Jobs ${data.id} started`,
+        statusText: `Jobs ${data.cronJobId} started`,
       };
     } catch (error) {
       return {
@@ -86,14 +105,55 @@ export class CronController {
   StopCronTabForSpecificJob(data: JobMessage): StatusMessage {
     try {
       const jobs = this.schedulerRegistry.getCronJobs();
-      const job = jobs.get(data.id);
+      const job = jobs.get(data.cronJobId);
       if (!job) throw Error('Job not found');
 
       job.stop();
 
       return {
         status: true,
-        statusText: `Jobs ${data.id} stopped`,
+        statusText: `Jobs ${data.cronJobId} stopped`,
+      };
+    } catch (error) {
+      return {
+        status: false,
+        statusText: error.message,
+      };
+    }
+  }
+
+  @GrpcMethod('CronService', 'ForceRunAllJobs')
+  ForceRunAllJobs(): StatusMessage {
+    try {
+      const jobs = this.schedulerRegistry.getCronJobs();
+      for (const job of jobs.values()) {
+        job.fireOnTick();
+      }
+
+      return {
+        status: true,
+        statusText: 'All jobs started',
+      };
+    } catch (error) {
+      return {
+        status: false,
+        statusText: error.message,
+      };
+    }
+  }
+
+  @GrpcMethod('CronService', 'ForceRunOneJob')
+  ForceRunOneJob(data: JobMessage): StatusMessage {
+    try {
+      const jobs = this.schedulerRegistry.getCronJobs();
+      const job = jobs.get(data.cronJobId);
+      if (!job) throw Error('Job not found');
+
+      job.fireOnTick();
+
+      return {
+        status: true,
+        statusText: `Jobs ${data.cronJobId} started`,
       };
     } catch (error) {
       return {

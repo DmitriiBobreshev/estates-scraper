@@ -13,5 +13,5 @@ export interface StatusMessage {
 }
 
 export interface JobMessage {
-  id: string;
+  cronJobId: string;
 }

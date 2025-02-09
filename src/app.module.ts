@@ -10,11 +10,20 @@ import { CronModule } from './cron/cron.module';
 import { ScraplogController } from './scraplog/scraplog.controller';
 import { ApikeyModule } from './apikey/apikey.module';
 
-const connectionString = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}`;
+const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_PORT, MONGO_DB } = process.env;
 
+const connectionString = `mongodb://${MONGO_HOST}:${MONGO_PORT}`;
 @Module({
   imports: [
-    MongooseModule.forRoot(connectionString),
+    MongooseModule.forRoot(connectionString, {
+      appName: MONGO_DB,
+      dbName: MONGO_DB,
+      authSource: 'admin',
+      auth: {
+        username: MONGO_USERNAME,
+        password: MONGO_PASSWORD
+      }
+    }),
     ScrapStatusModule,
     CronModule,
     ApikeyModule,

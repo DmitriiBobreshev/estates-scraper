@@ -39,11 +39,11 @@ export class HalooglasiService {
     private readonly utilService: UtilService,
   ) {}
 
-  // @TODO change on 12 hours
-  @Cron(CronExpression.EVERY_5_SECONDS, {
+  @Cron(CronExpression.EVERY_12_HOURS, {
     name: ScraperType.Halooglasi,
     timeZone: 'Europe/Belgrade',
-    disabled: true,
+    waitForCompletion: true,
+    disabled: false,
   })
   async handleCron() {
     try {
@@ -60,8 +60,7 @@ export class HalooglasiService {
       this.logger.error('Error in cron job: ' + e);
     } finally {
       this.logger.log('Cron job finished');
-      // @TODO uncommit in prod
-      // this.inProgress = false;
+      this.inProgress = false;
     }
   }
 

@@ -4,7 +4,10 @@ package cron;
 
 service CronService {
   rpc GetCronTabJobs (Empty) returns (stream CronJob) {}
+  rpc ForceRunAllJobs (Empty) returns (StatusMessage) {}
+  rpc ForceRunOneJob (JobMessage) returns (StatusMessage) {}
   rpc StartCronTabForAll (Empty) returns (StatusMessage) {}
+  rpc StopCronTabForAll (Empty) returns (StatusMessage) {}
   rpc StartCronTabForSpecificJob (JobMessage) returns (StatusMessage) {}
   rpc StopCronTabForSpecificJob (JobMessage) returns (StatusMessage) {}
 }
@@ -26,5 +29,5 @@ message StatusMessage {
 }
 
 message JobMessage {
-  string id = 1;
+  string cronJobId = 1;
 }

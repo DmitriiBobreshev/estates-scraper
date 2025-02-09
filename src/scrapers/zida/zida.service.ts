@@ -33,11 +33,11 @@ export class ZidaService {
     private readonly utilService: UtilService,
   ) {}
 
-  // @TODO change on 12 hours
-  @Cron(CronExpression.EVERY_5_SECONDS, {
+  @Cron(CronExpression.EVERY_12_HOURS, {
     name: ScraperType.Zida,
     timeZone: 'Europe/Belgrade',
-    disabled: true,
+    waitForCompletion: true,
+    disabled: false,
   })
   async handleCron() {
     try {
@@ -54,8 +54,7 @@ export class ZidaService {
       this.logger.error('Error in cron job: ' + e);
     } finally {
       this.logger.log('Cron job finished');
-      // @TODO uncommit in prod
-      // this.inProgress = false;
+      this.inProgress = false;
     }
   }
 
