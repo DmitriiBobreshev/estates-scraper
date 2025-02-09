@@ -7,6 +7,7 @@ export const grpcClientOptions: GrpcOptions = {
   options: {
     package: ['cron', 'scraplog'],
     protoPath: [join(__dirname, './cron/cron.proto'), join(__dirname, './scraplog/scraplog.proto')],
+    url: `localhost:${process.env.GRPC_PORT}`,
     onLoadPackageDefinition: (pkg, server) => {
       new ReflectionService(pkg).addToServer(server);
     },

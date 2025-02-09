@@ -1,9 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob, Empty, JobMessage, StatusMessage } from './interfaces/cron.interface';
 import { Observable, Subject } from 'rxjs';
+import { ApiKeyGuard } from 'src/apikey/apikey.guard';
 
+
+@UseGuards(ApiKeyGuard)
 @Controller('cron')
 export class CronController {
   constructor(
