@@ -2,7 +2,7 @@ import { ReflectionService } from '@grpc/reflection';
 import { GrpcOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 
-const { GRPC_IP, GRPC_PORT} = process.env;
+const { GRPC_IP, GRPC_PORT } = process.env;
 
 export const grpcClientOptions: GrpcOptions = {
   transport: Transport.GRPC,
