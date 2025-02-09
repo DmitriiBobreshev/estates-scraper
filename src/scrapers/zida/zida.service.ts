@@ -157,7 +157,7 @@ export class ZidaService {
       const url = this.utilService.getConcatedUrl(pageUrl, href);
       try {
         const estate = await this.scrapProductDetails(url);
-        await this.utilService.delayRandom(1000);
+        await this.utilService.delayRandom(30_000);
         if (!estate.Price) continue;
 
         resArr.push(estate);
