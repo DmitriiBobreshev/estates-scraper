@@ -16,6 +16,7 @@ export class CreateRealEstateDto {
   PropertyType: PropertyType;
   Price: number;
 
+  FirstPublishedAt?: number;
   LocationCoords?: string;
   Street?: string;
   Area?: number;

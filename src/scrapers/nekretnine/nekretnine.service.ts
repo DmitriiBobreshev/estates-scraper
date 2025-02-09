@@ -158,7 +158,9 @@ export class NekretnineService {
       const rooms = this.getPropFromArr(anamnesis, Props.Rooms);
       const floor = this.getPropFromArr(anamnesis, Props.Floor);
       const totalFloors = this.getPropFromArr(anamnesis, Props.TotalFloors);
-
+      const dates = [...document.querySelectorAll(NekretnineSelectors.Updated)].map(li => li.textContent.trim());
+      const publishDate = this.getPropFromArr(dates, Props.Published);
+     
       const coords = [...document.querySelectorAll(NekretnineSelectors.Script)]
         ?.find(s => s.text.includes(Props.Lat) || s.text.includes(Props.Lng))
         ?.textContent
@@ -185,6 +187,17 @@ export class NekretnineService {
       property.Price = parseInt(price);
       property.ImgLinks = imgs;
       property.Description = description;
+
+      if (publishDate) {
+        const pDateArr = publishDate.split('.');
+        const date = new Date();
+        date.setFullYear(pDateArr[2]);
+        date.setMonth(pDateArr[1] - 1);
+        date.setDate(pDateArr[0]);
+        property.FirstPublishedAt = date.getTime() || 0;
+      } else {
+        property.FirstPublishedAt = 0;
+      }
 
       return property;
     } catch (e) {

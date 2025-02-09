@@ -214,6 +214,7 @@ export class CityexpertService {
       property.Floor = json.floor;
       property.AdditionalInfo = null;
       property.Description = null;
+      property.FirstPublishedAt = new Date(json.firstPublished).getTime() || 0;
       property.ImgLinks = json.onsite.imgFiles.map(
         (img: any) =>
           `https://img.cityexpert.rs/sites/default/files/styles/720x/public/image/${img}`,

@@ -30,7 +30,6 @@
     "@nestjs/mongoose": "^11.0.1",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/schedule": "^5.0.1",
-    "@nestjs/swagger": "^11.0.3",
     "dotenv": "^16.4.7",
     "mongoose": "^8.9.5",
     "node-html-parser": "^7.0.1",

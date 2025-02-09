@@ -15,6 +15,7 @@ export enum HalooglasiSelectors {
   PropertyAdditionalInfoSelector = '"dodatno_ss"',
   PropertyImageLinksSelector = '"ImageURLs"',
   PropertyDescriptionSelector = '"TextHtml"',
+  PropertyFirstPublishedAtSelector = '"ValidFrom"',
 }
 
 export enum HalooglasiUrls {

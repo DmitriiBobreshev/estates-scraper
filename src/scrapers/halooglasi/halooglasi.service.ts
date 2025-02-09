@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
+import { writeFileSync } from 'fs';
+
 import { UtilService } from 'src/common/providers/utils.service';
 
 import { ScrapStatusService } from 'src/scraplog/scraplog.service';
@@ -258,6 +260,8 @@ export class HalooglasiService {
       HalooglasiSelectors.PropertyDescriptionSelector,
       Defaults.StringDefault,
     );
+    const validFrom = this.utilService.getDataFromJsonString<string>(productJson, HalooglasiSelectors.PropertyFirstPublishedAtSelector, Defaults.StringDefault)
+    property.FirstPublishedAt = new Date(validFrom).getTime() || 0;
 
     return property;
   }

@@ -37,7 +37,7 @@ export class ZidaService {
   @Cron(CronExpression.EVERY_5_SECONDS, {
     name: ScraperType.Zida,
     timeZone: 'Europe/Belgrade',
-    disabled: true,
+    disabled: false,
   })
   async handleCron() {
     try {
@@ -223,6 +223,7 @@ export class ZidaService {
           .filter((e) => e)
           .join('\n') ?? 'unknown';
 
+      property.FirstPublishedAt = 0;
       return property;
     } catch (e) {
       throw new Error(`Failed to scrap product ${productUrl}, Error: ${e} content: ${content}`);

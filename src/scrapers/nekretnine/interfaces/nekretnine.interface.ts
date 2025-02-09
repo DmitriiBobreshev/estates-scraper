@@ -13,7 +13,8 @@ export enum NekretnineSelectors {
   Price = 'h4.stickyBox__price',
   Description = 'div.property__description',
   Images = 'div.gallery-main-thumbs img',
-  Script = 'script'
+  Script = 'script',
+  Updated = 'div.property__body div.updated span',
 }
 
 export enum Props {
@@ -26,4 +27,5 @@ export enum Props {
   TotalFloors = 'broj spratova',
   Lat = 'ppLat',
   Lng = 'ppLng',
+  Published = 'objavljen',
 }

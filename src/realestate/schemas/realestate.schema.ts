@@ -66,6 +66,9 @@ export class RealEstates {
 
   @Prop()
   Description: string;
+
+  @Prop()
+  FirstPublishedAt: number;
 }
 
 export const RealEstatesSchema = SchemaFactory.createForClass(RealEstates);
