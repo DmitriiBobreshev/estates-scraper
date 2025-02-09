@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package scraplog;
+
+service ScrapLogService {
+  rpc GetJobs (GetJobsRequest) returns (stream GetJobsResponse) {}
+  rpc GetAllRecords (Empty) returns (stream LogRecord) {}
+  rpc GetRecordByJobId (RecordIdRequest) returns (stream LogRecord) {}
+}
+
+message Empty {}
+
+message GetJobsRequest {
+  string dateFrom = 1;
+  string dateTo = 2;
+}
+
+message GetJobsResponse {
+  string id = 1;
+  string status = 2;
+  string scraperType = 3;
+  string createdAt = 4;
+}
+
+message RecordIdRequest {
+  string JobId = 1;
+}
+
+message LogRecord {
+  string recordId = 1;
+  string jobId = 2;
+  int32 type = 3;
+  string message = 4;
+  string createdAt = 5;
+}

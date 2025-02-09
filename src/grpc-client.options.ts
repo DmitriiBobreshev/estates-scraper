@@ -5,8 +5,8 @@ import { join } from 'path';
 export const grpcClientOptions: GrpcOptions = {
   transport: Transport.GRPC,
   options: {
-    package: 'cron', // ['hero', 'hero2']
-    protoPath: join(__dirname, './cron/cron.proto'), // ['./hero/hero.proto', './hero/hero2.proto']
+    package: ['cron', 'scraplog'],
+    protoPath: [join(__dirname, './cron/cron.proto'), join(__dirname, './scraplog/scraplog.proto')],
     onLoadPackageDefinition: (pkg, server) => {
       new ReflectionService(pkg).addToServer(server);
     },

@@ -17,3 +17,30 @@ export enum ScrapLogType {
   Warning = 1,
   Error = 2,
 }
+
+
+export interface Empty {}
+
+export interface  GetJobsRequest {
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface  GetJobsResponse {
+  id: string;
+  status: ScraperStatus;
+  scraperType: ScraperType;
+  createdAt: string;
+}
+
+export interface  RecordIdRequest {
+  JobId: string;
+}
+
+export interface  LogRecord {
+  recordId: string;
+  jobId: string;
+  type: any;
+  message: string;
+  createdAt: any;
+}
